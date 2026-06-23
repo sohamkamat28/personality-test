@@ -63,13 +63,19 @@ export async function DELETE(request) {
   const removed = await updateDb((db) => {
     const studentsBefore = db.students.length;
     const submissionsBefore = db.submissions.length;
+    const progressBefore = (db.progress || []).length;
+    const activeSessionsBefore = (db.activeSessions || []).length;
 
     db.students = db.students.filter((student) => normalizeEmail(student.email) !== normalizedEmail);
     db.submissions = db.submissions.filter((submission) => normalizeEmail(submission.email) !== normalizedEmail);
+    db.progress = (db.progress || []).filter((progress) => normalizeEmail(progress.email) !== normalizedEmail);
+    db.activeSessions = (db.activeSessions || []).filter((session) => normalizeEmail(session.email) !== normalizedEmail);
 
     return {
       studentRemoved: studentsBefore - db.students.length,
-      submissionsRemoved: submissionsBefore - db.submissions.length
+      submissionsRemoved: submissionsBefore - db.submissions.length,
+      progressRemoved: progressBefore - db.progress.length,
+      activeSessionsRemoved: activeSessionsBefore - db.activeSessions.length
     };
   });
 

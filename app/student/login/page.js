@@ -20,6 +20,13 @@ function signInErrorContent(status, fallback) {
     };
   }
 
+  if (status === 423) {
+    return {
+      title: "Already signed in elsewhere",
+      message: "This account is currently active on another device. Please sign out there first, then continue the assessment from this device."
+    };
+  }
+
   return {
     title: "Sign-in could not be completed",
     message: fallback || "Please try again in a moment, or contact the administrator if the issue continues."

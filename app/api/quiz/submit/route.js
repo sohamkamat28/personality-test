@@ -5,6 +5,15 @@ import { getStudentSession } from "@/lib/server/session";
 
 const allowedAnswersByQuestion = assessmentQuestions.map((question) => new Set(question.options.map((option) => option.value)));
 
+function isCurrentActiveSession(db, email, sessionId) {
+  const activeSession = (db.activeSessions || []).find((item) => normalizeEmail(item.email) === email);
+  return (
+    sessionId &&
+    activeSession?.sessionId === sessionId &&
+    (!activeSession.expiresAt || new Date(activeSession.expiresAt).getTime() > Date.now())
+  );
+}
+
 export async function POST(request) {
   const session = await getStudentSession();
   if (!session) {
@@ -28,6 +37,10 @@ export async function POST(request) {
     const alreadySubmitted = db.submissions.some((submission) => normalizeEmail(submission.email) === email);
     if (alreadySubmitted) return { status: 409, message: "This account has already submitted the assessment." };
 
+    if (!isCurrentActiveSession(db, email, session.sessionId)) {
+      return { status: 409, message: "This session is no longer active. Please sign in again from your current device." };
+    }
+
     db.submissions.push({
       email,
       name: session.name || "",
@@ -35,6 +48,9 @@ export async function POST(request) {
       submittedAt: new Date().toISOString(),
       userAgent: ""
     });
+
+    db.progress = (db.progress || []).filter((item) => normalizeEmail(item.email) !== email);
+    db.activeSessions = (db.activeSessions || []).filter((item) => normalizeEmail(item.email) !== email || item.sessionId !== session.sessionId);
 
     return { status: 200 };
   });
