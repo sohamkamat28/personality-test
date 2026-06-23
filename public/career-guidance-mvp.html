@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riya Kamat Studio | Career Guidance for Grades 9 & 10</title>
+  <meta name="description" content="Personalized career guidance for Grades 9 and 10 using personality assessment, Ayurvedic insights, and expert counselling." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/split-type"></script>
+  <style>
+    :root {
+      --bg: #EAE6DF;
+      --surface: #F4F1EB;
+      --ink: #1C1B1A;
+      --muted: #827C75;
+      --terracotta: #A84B2B;
+      --border: rgba(28, 27, 26, 0.12);
+      --container: min(92vw, 1480px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    a,
+    button,
+    .interactive,
+    .method-row {
+      cursor: none;
+    }
+
+    img[src*="unsplash"] {
+      filter: grayscale(80%) sepia(15%) hue-rotate(345deg) contrast(1.1) brightness(0.9);
+      transition: filter 700ms cubic-bezier(.19, 1, .22, 1), transform 900ms cubic-bezier(.19, 1, .22, 1);
+    }
+
+    img[src*="unsplash"]:hover,
+    .image-frame:hover img[src*="unsplash"] {
+      filter: grayscale(35%) sepia(18%) hue-rotate(345deg) contrast(1.22) brightness(0.98);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 280 280' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.42'/%3E%3C/svg%3E");
+    }
+
+    .texture {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -3;
+      background-image: url("https://images.unsplash.com/photo-1604147706283-d7119b5b822c?q=80&w=2400&auto=format&fit=crop");
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: multiply;
+      opacity: 0.12;
+    }
+
+    .draft-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background-image:
+        linear-gradient(to right, rgba(28, 27, 26, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(28, 27, 26, 0.06) 1px, transparent 1px);
+      background-size: 88px 88px;
+      mask-image: radial-gradient(circle at center, black 0%, black 44%, transparent 82%);
+      opacity: 0.55;
+    }
+
+    .giant-word {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      font-family: "Instrument Serif", serif;
+      font-size: 25vw;
+      line-height: .8;
+      color: var(--ink);
+      opacity: 0.02;
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: 0;
+    }
+
+    .marker {
+      position: fixed;
+      color: var(--terracotta);
+      opacity: 0.42;
+      pointer-events: none;
+      z-index: 0;
+      font-family: "Instrument Serif", serif;
+    }
+
+    .marker.plus {
+      right: 8vw;
+      top: 18vh;
+      font-size: 54px;
+    }
+
+    .marker.star {
+      left: 6vw;
+      bottom: 20vh;
+      font-size: 48px;
+      animation: slowSpin 28s linear infinite;
+    }
+
+    @keyframes slowSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .cursor-dot,
+    .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 2000;
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--terracotta);
+    }
+
+    .cursor-ring {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--terracotta);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--surface);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      backdrop-filter: blur(0px);
+      transition: background 220ms ease, border-color 220ms ease, color 220ms ease, width 220ms ease, height 220ms ease;
+    }
+
+    .cursor-ring span {
+      opacity: 0;
+      transform: scale(.8);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    body.cursor-active .cursor-ring {
+      width: 58px;
+      height: 58px;
+      backdrop-filter: blur(8px);
+      background: rgba(244, 241, 235, 0.2);
+    }
+
+    body.cursor-view .cursor-dot {
+      opacity: 0;
+    }
+
+    body.cursor-view .cursor-ring {
+      width: 68px;
+      height: 68px;
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    body.cursor-view .cursor-ring span {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .site {
+      width: var(--container);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .baseline-lines {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      width: var(--container);
+      height: 100vh;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .baseline-lines span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(28, 27, 26, 0.09);
+      transform-origin: top;
+      transform: scaleY(0);
+    }
+
+    .baseline-lines span:nth-child(1) { left: 0; }
+    .baseline-lines span:nth-child(2) { left: 25%; }
+    .baseline-lines span:nth-child(3) { left: 50%; }
+    .baseline-lines span:nth-child(4) { left: 75%; }
+    .baseline-lines span:nth-child(5) { left: 100%; }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 5;
+    }
+
+    .brand {
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(28px, 3vw, 44px);
+      letter-spacing: 0;
+    }
+
+    .nav-meta {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--muted);
+    }
+
+    .nav-meta a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(244, 241, 235, 0.55);
+    }
+
+    .hero {
+      min-height: calc(100vh - 84px);
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      align-items: end;
+      padding: 72px 0 52px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-copy {
+      grid-column: 1 / 9;
+      padding-bottom: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      color: var(--terracotta);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 48px;
+      height: 1px;
+      background: var(--terracotta);
+    }
+
+    h1 {
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(66px, 9.3vw, 158px);
+      line-height: .86;
+      font-weight: 400;
+      letter-spacing: 0;
+      max-width: 1050px;
+    }
+
+    h1 em,
+    .section-heading em,
+    .problem h2 em,
+    .interactive-list h2 em,
+    .deliverable-copy h2 em,
+    .testimonials h2 em,
+    .contact h2 em {
+      font-style: italic;
+      color: var(--terracotta);
+    }
+
+    .split-line {
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .hero-sub {
+      margin-top: 34px;
+      max-width: 640px;
+      font-size: clamp(17px, 1.45vw, 24px);
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 36px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 22px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--ink);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      transition: color 240ms ease, background 240ms ease, border-color 240ms ease, transform 240ms ease;
+    }
+
+    .btn.primary {
+      color: var(--surface);
+      background: var(--ink);
+    }
+
+    .btn:hover {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: var(--surface);
+      transform: translateY(-2px);
+    }
+
+    .hero-plate {
+      grid-column: 9 / 13;
+      align-self: stretch;
+      min-height: 540px;
+      position: relative;
+      border-left: 1px solid var(--border);
+      padding-left: 24px;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .hero-card {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .hero-card .image-frame {
+      height: 72%;
+      overflow: hidden;
+      border-radius: 180px 2px 2px 2px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      height: 115%;
+      object-fit: cover;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding-top: 22px;
+    }
+
+    .stat {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .stat strong {
+      font-family: "Instrument Serif", serif;
+      font-size: 48px;
+      font-weight: 400;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.35;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    section {
+      position: relative;
+      z-index: 2;
+    }
+
+    .problem {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      padding: 116px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .problem h2 {
+      grid-column: 1 / 6;
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(48px, 5.4vw, 92px);
+      font-weight: 400;
+      line-height: .94;
+    }
+
+    .problem-copy {
+      grid-column: 7 / 13;
+      display: grid;
+      gap: 28px;
+      font-size: clamp(18px, 1.5vw, 25px);
+      line-height: 1.52;
+      color: var(--ink);
+    }
+
+    .problem-copy p {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+
+    .atelier {
+      padding: 110px 0 132px;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-kicker {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      margin-bottom: 46px;
+    }
+
+    .section-kicker p {
+      grid-column: 1 / 4;
+      color: var(--terracotta);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .section-heading {
+      grid-column: 4 / 13;
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(54px, 7vw, 116px);
+      line-height: .9;
+      font-weight: 400;
+      max-width: 960px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: minmax(92px, auto);
+      gap: 24px;
+      position: relative;
+    }
+
+    .tall-editorial {
+      grid-column: 1 / 7;
+      grid-row: 1 / span 7;
+      min-height: 780px;
+      position: relative;
+    }
+
+    .tall-editorial .image-frame {
+      height: 100%;
+      overflow: hidden;
+      border-radius: 200px 2px 2px 2px;
+      background: var(--surface);
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .tall-editorial img {
+      width: 100%;
+      height: 115%;
+      object-fit: cover;
+    }
+
+    .editorial-caption {
+      position: absolute;
+      right: -72px;
+      bottom: 46px;
+      width: min(420px, 78%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 30px;
+      box-shadow: 0 28px 80px rgba(28, 27, 26, 0.08);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 26px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+    }
+
+    .editorial-caption h3,
+    .detail-card h3,
+    .dark-block h3 {
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    .editorial-caption h3 {
+      font-size: clamp(36px, 3.7vw, 62px);
+    }
+
+    .editorial-caption p {
+      margin-top: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .dark-block {
+      grid-column: 8 / 13;
+      grid-row: 1 / span 4;
+      min-height: 445px;
+      background:
+        repeating-radial-gradient(circle at 76% 24%, transparent 0 14px, rgba(244, 241, 235, 0.08) 15px 16px),
+        var(--ink);
+      color: var(--surface);
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dark-block::after {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(244, 241, 235, 0.18);
+      pointer-events: none;
+    }
+
+    .dark-block .meta {
+      color: rgba(244, 241, 235, 0.62);
+      position: relative;
+      z-index: 2;
+    }
+
+    .dark-block h3 {
+      max-width: 420px;
+      font-size: clamp(42px, 4.4vw, 76px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .dark-block p {
+      max-width: 390px;
+      margin-top: 24px;
+      color: rgba(244, 241, 235, 0.7);
+      line-height: 1.7;
+      position: relative;
+      z-index: 2;
+    }
+
+    .magnetic {
+      position: absolute;
+      right: 34px;
+      bottom: 34px;
+      z-index: 3;
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      border: 1px solid rgba(244, 241, 235, 0.72);
+      color: var(--surface);
+      background: transparent;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+
+    .magnetic span {
+      display: inline-block;
+      pointer-events: none;
+    }
+
+    .magnetic::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: inherit;
+      border: 1px solid rgba(244, 241, 235, 0.2);
+    }
+
+    .detail-card {
+      grid-column: 6 / 10;
+      grid-row: 5 / span 3;
+      align-self: start;
+      min-height: 305px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 30px;
+      position: relative;
+      z-index: 4;
+      box-shadow: 0 24px 70px rgba(28, 27, 26, 0.08);
+    }
+
+    .detail-card h3 {
+      font-size: clamp(34px, 3.2vw, 56px);
+    }
+
+    .detail-card p {
+      margin-top: 20px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .seal {
+      position: absolute;
+      right: -70px;
+      top: 50%;
+      width: 142px;
+      height: 142px;
+      transform: translateY(-50%);
+      color: var(--terracotta);
+      animation: sealSpin 16s linear infinite;
+      overflow: visible;
+    }
+
+    @keyframes sealSpin {
+      to { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    .seal svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .seal text {
+      fill: var(--terracotta);
+      font-family: "Manrope", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .18em;
+    }
+
+    .seal-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      animation: sealCounter 16s linear infinite;
+    }
+
+    @keyframes sealCounter {
+      to { transform: rotate(-360deg); }
+    }
+
+    .seal-center i {
+      font-size: 28px;
+    }
+
+    .interactive-list {
+      grid-column: 1 / 13;
+      grid-row: 9 / span 3;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 24px;
+      align-items: start;
+      padding-top: 52px;
+      border-top: 1px solid var(--border);
+    }
+
+    .interactive-list h2 {
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(54px, 6vw, 104px);
+      line-height: .88;
+      font-weight: 400;
+    }
+
+    .method-list {
+      border-top: 1px solid var(--border);
+    }
+
+    .method-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 80px 1fr 42px;
+      gap: 18px;
+      align-items: center;
+      min-height: 124px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink);
+      transition: color 320ms ease;
+      text-decoration: none;
+    }
+
+    .method-row .num {
+      font-family: "Instrument Serif", serif;
+      font-size: 32px;
+      color: var(--muted);
+    }
+
+    .method-row h3 {
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(34px, 3.2vw, 58px);
+      font-weight: 400;
+      line-height: 1;
+      transition: transform 420ms cubic-bezier(.19, 1, .22, 1), color 320ms ease;
+    }
+
+    .method-row p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 590px;
+      transition: transform 420ms cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .method-row i {
+      font-size: 30px;
+      transition: transform 420ms cubic-bezier(.19, 1, .22, 1), color 320ms ease;
+    }
+
+    .method-row:hover {
+      color: var(--terracotta);
+    }
+
+    .method-row:hover h3,
+    .method-row:hover p {
+      transform: translateX(24px);
+    }
+
+    .method-row:hover i {
+      color: var(--terracotta);
+      transform: rotate(45deg);
+    }
+
+    .hover-image {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 330px;
+      height: 430px;
+      z-index: 900;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.92);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .hover-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .process {
+      padding: 118px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .process-step {
+      min-height: 340px;
+      padding: 28px;
+      background: rgba(244, 241, 235, 0.46);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background 280ms ease, transform 280ms ease;
+    }
+
+    .process-step:hover {
+      background: var(--surface);
+      transform: translateY(-6px);
+    }
+
+    .process-step .num {
+      font-family: "Instrument Serif", serif;
+      font-size: 52px;
+      color: var(--terracotta);
+    }
+
+    .process-step h3 {
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 1;
+    }
+
+    .process-step p {
+      margin-top: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .deliverable {
+      padding: 110px 0;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .deliverable-copy {
+      grid-column: 1 / 6;
+    }
+
+    .deliverable-copy h2,
+    .testimonials h2,
+    .contact h2 {
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      font-size: clamp(52px, 6vw, 108px);
+      line-height: .9;
+    }
+
+    .deliverable-copy p {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .roadmap {
+      grid-column: 7 / 13;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 20px;
+      padding: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .roadmap-item:last-child {
+      border-bottom: 0;
+    }
+
+    .roadmap-item i {
+      font-size: 34px;
+      color: var(--terracotta);
+    }
+
+    .roadmap-item h3 {
+      font-family: "Instrument Serif", serif;
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .roadmap-item p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .testimonials {
+      padding: 112px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .testimonial-grid {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .quote {
+      min-height: 330px;
+      padding: 30px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .quote i {
+      font-size: 44px;
+      color: var(--terracotta);
+    }
+
+    .quote p {
+      margin-top: 28px;
+      font-family: "Instrument Serif", serif;
+      font-size: 34px;
+      line-height: 1.08;
+    }
+
+    .quote span {
+      display: block;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .contact {
+      min-height: 76vh;
+      padding: 116px 0;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .contact-copy {
+      grid-column: 1 / 8;
+    }
+
+    .contact-copy p {
+      margin-top: 28px;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(18px, 1.55vw, 25px);
+      line-height: 1.55;
+    }
+
+    .contact-panel {
+      grid-column: 8 / 13;
+      background: var(--ink);
+      color: var(--surface);
+      padding: 34px;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: repeating-radial-gradient(circle, rgba(244, 241, 235, .09) 0 1px, transparent 1px 18px);
+      opacity: .8;
+    }
+
+    .contact-panel > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .contact-panel h3 {
+      font-family: "Instrument Serif", serif;
+      font-size: 54px;
+      font-weight: 400;
+      line-height: .95;
+    }
+
+    .contact-links {
+      display: grid;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .contact-links a {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      color: var(--surface);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(244, 241, 235, 0.18);
+      font-size: 15px;
+    }
+
+    .contact-links i {
+      color: var(--terracotta);
+      font-size: 24px;
+    }
+
+    .availability {
+      color: rgba(244, 241, 235, 0.62);
+      font-size: 12px;
+      line-height: 1.7;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 980px) {
+      body {
+        cursor: auto;
+      }
+
+      a,
+      button,
+      .interactive,
+      .method-row {
+        cursor: pointer;
+      }
+
+      .cursor-dot,
+      .cursor-ring,
+      .hover-image {
+        display: none;
+      }
+
+      .site {
+        width: min(90vw, 720px);
+      }
+
+      .baseline-lines {
+        width: min(90vw, 720px);
+      }
+
+      .nav {
+        min-height: 74px;
+      }
+
+      .nav-meta span {
+        display: none;
+      }
+
+      .hero,
+      .problem,
+      .section-kicker,
+      .feature-grid,
+      .interactive-list,
+      .deliverable,
+      .contact {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-plate,
+      .problem h2,
+      .problem-copy,
+      .section-kicker p,
+      .section-heading,
+      .tall-editorial,
+      .dark-block,
+      .detail-card,
+      .interactive-list,
+      .deliverable-copy,
+      .roadmap,
+      .contact-copy,
+      .contact-panel {
+        grid-column: 1;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 62px 0 38px;
+      }
+
+      .hero-copy {
+        padding-bottom: 0;
+      }
+
+      .hero-plate {
+        min-height: 500px;
+        border-left: 0;
+        padding-left: 0;
+      }
+
+      .problem,
+      .atelier,
+      .process,
+      .deliverable,
+      .testimonials,
+      .contact {
+        padding: 76px 0;
+      }
+
+      .feature-grid {
+        grid-auto-rows: auto;
+      }
+
+      .tall-editorial,
+      .dark-block,
+      .detail-card,
+      .interactive-list {
+        grid-row: auto;
+      }
+
+      .tall-editorial {
+        min-height: 620px;
+      }
+
+      .editorial-caption {
+        right: 16px;
+        bottom: 16px;
+        width: calc(100% - 32px);
+      }
+
+      .detail-card {
+        min-height: auto;
+        overflow: hidden;
+      }
+
+      .seal {
+        right: 10px;
+        width: 104px;
+        height: 104px;
+        opacity: .72;
+      }
+
+      .interactive-list {
+        padding-top: 28px;
+      }
+
+      .method-row {
+        grid-template-columns: 54px 1fr 30px;
+        min-height: 138px;
+      }
+
+      .method-row:hover h3,
+      .method-row:hover p {
+        transform: none;
+      }
+
+      .process-grid,
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .process-step {
+        min-height: 260px;
+      }
+
+      .giant-word {
+        width: 100vw;
+        overflow: hidden;
+        text-align: center;
+        font-size: 30vw;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .hero-actions,
+      .stat-row {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero-card {
+        padding: 14px;
+      }
+
+      .hero-plate {
+        min-height: 430px;
+      }
+
+      .tall-editorial {
+        min-height: 540px;
+      }
+
+      .dark-block {
+        min-height: 520px;
+        padding: 24px;
+      }
+
+      .magnetic {
+        width: 110px;
+        height: 110px;
+        right: 24px;
+        bottom: 24px;
+      }
+
+      .roadmap-item {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-panel {
+        min-height: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="texture" aria-hidden="true"></div>
+  <div class="draft-grid" aria-hidden="true"></div>
+  <div class="giant-word" aria-hidden="true">ATELIER</div>
+  <div class="marker plus" aria-hidden="true">+</div>
+  <div class="marker star" aria-hidden="true">*</div>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"><span>VIEW</span></div>
+
+  <div class="baseline-lines" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="hover-image" aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=900&auto=format&fit=crop" alt="">
+  </div>
+
+  <main class="site">
+    <nav class="nav">
+      <div class="brand">Riya Kamat Studio</div>
+      <div class="nav-meta">
+        <span>Grades 9 & 10 Career Guidance</span>
+        <a class="interactive" href="https://wa.me/919833004992">Free Discovery Session</a>
+      </div>
+    </nav>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow">Personalized Career Guidance</div>
+        <h1 id="hero-title" class="reveal-title">From Confusion to <em>Clarity</em>: Guidance for Grades 9 &amp; 10.</h1>
+        <p class="hero-sub">We help students discover who they are so they can make academic and career choices with conviction, calm, and an evidence-backed sense of direction.</p>
+        <div class="hero-actions">
+          <a class="btn primary interactive" href="https://wa.me/919833004992">
+            <i class="ph ph-whatsapp-logo"></i>
+            WhatsApp Us for a Free Discovery Session
+          </a>
+          <a class="btn interactive" href="tel:+919833004992">
+            <i class="ph ph-phone"></i>
+            Call Now
+          </a>
+        </div>
+      </div>
+
+      <aside class="hero-plate">
+        <div class="hero-card">
+          <div class="image-frame image-hover">
+            <img class="parallax-img" src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop" alt="Architectural studio table with paper, pencil, and plaster-toned materials">
+          </div>
+          <div class="stat-row">
+            <div class="stat">
+              <strong>01</strong>
+              <span>Student-first interpretation</span>
+            </div>
+            <div class="stat">
+              <strong>04</strong>
+              <span>Clear guidance stages</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="problem">
+      <h2>Moving beyond the <em>report card.</em></h2>
+      <div class="problem-copy">
+        <p>Choosing a stream is often the first major life decision a young person makes, yet it usually arrives before they truly know their own strengths.</p>
+        <p>Many families rely on marks, peer influence, or societal trends, which can lead to future stress and regret.</p>
+        <p>Meaningful guidance begins with understanding the individual, not just their grades.</p>
+      </div>
+    </section>
+
+    <section class="atelier" id="methodology" aria-labelledby="atelier-title">
+      <div class="section-kicker">
+        <p>Our Methodology</p>
+        <h2 id="atelier-title" class="section-heading">Science meets <em>tradition</em> inside a carefully drawn student profile.</h2>
+      </div>
+
+      <div class="feature-grid">
+        <article class="tall-editorial">
+          <div class="image-frame image-hover">
+            <img class="parallax-img" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1400&auto=format&fit=crop" alt="Warm architectural interior with structural arches">
+          </div>
+          <div class="editorial-caption">
+            <div class="meta">
+              <span>01 Methodology</span>
+              <span>Personality</span>
+            </div>
+            <h3>Orchestrating Silent Volumes</h3>
+            <p>Globally recognized personality frameworks reveal how a student naturally perceives the world, processes information, learns, and makes decisions without placing labels on them.</p>
+          </div>
+        </article>
+
+        <article class="dark-block">
+          <div class="meta">
+            <span>02 Traditional Lens</span>
+            <span>Prakriti / Vikriti</span>
+          </div>
+          <h3>Mapping Energy, Pace, and Resilience.</h3>
+          <p>Ayurvedic insights add a human dimension to the profile, illuminating constitutional patterns, lifestyle preferences, and the conditions in which a student can thrive.</p>
+          <button class="magnetic interactive" type="button" aria-label="Discover the holistic methodology">
+            <span>Discover</span>
+          </button>
+        </article>
+
+        <article class="detail-card">
+          <div class="meta">
+            <span>03 Expert Reading</span>
+            <span>Manual Review</span>
+          </div>
+          <h3>Not an automated report. A guided interpretation.</h3>
+          <p>Every result is reviewed by an SSU Certified Career Counsellor to identify meaningful patterns that standardized outputs often miss.</p>
+          <div class="seal" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <defs>
+                <path id="sealPath" d="M60,60 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"></path>
+              </defs>
+              <text>
+                <textPath href="#sealPath">• BESPOKE CRAFT • RAW MATERIALITY</textPath>
+              </text>
+            </svg>
+            <div class="seal-center">
+              <i class="ph-fill ph-sparkle"></i>
+            </div>
+          </div>
+        </article>
+
+        <div class="interactive-list">
+          <h2>The process is <em>precise</em>, but never clinical.</h2>
+          <div class="method-list" aria-label="Step by step process">
+            <a class="method-row" href="#contact" data-img="https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=900&auto=format&fit=crop">
+              <span class="num">01</span>
+              <span>
+                <h3>The Discovery Session</h3>
+                <p>A one-on-one online interaction with the student and parents to explore interests, aspirations, habits, pace, and questions.</p>
+              </span>
+              <i class="ph ph-arrow-up-right"></i>
+            </a>
+            <a class="method-row" href="#contact" data-img="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=900&auto=format&fit=crop">
+              <span class="num">02</span>
+              <span>
+                <h3>Guided Assessments</h3>
+                <p>Simple, verified multiple-choice questionnaires focused on personality patterns and constitutional makeup.</p>
+              </span>
+              <i class="ph ph-arrow-up-right"></i>
+            </a>
+            <a class="method-row" href="#contact" data-img="https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?q=80&w=900&auto=format&fit=crop">
+              <span class="num">03</span>
+              <span>
+                <h3>Feedback &amp; Interpretation</h3>
+                <p>A dedicated session where findings are explained in practical language with no psychological jargon and no forced conclusions.</p>
+              </span>
+              <i class="ph ph-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process">
+      <div class="section-kicker">
+        <p>Four-Part Guidance</p>
+        <h2 class="section-heading">A step-by-step architecture for <em>choice.</em></h2>
+      </div>
+
+      <div class="process-grid">
+        <article class="process-step">
+          <div class="num">01</div>
+          <div>
+            <h3>Discovery Session</h3>
+            <p>We listen first, mapping interests, study habits, family expectations, and the student’s own emerging sense of self.</p>
+          </div>
+        </article>
+        <article class="process-step">
+          <div class="num">02</div>
+          <div>
+            <h3>Guided Assessments</h3>
+            <p>Students complete clear questionnaires designed to surface learning style, temperament, decision patterns, and energy rhythms.</p>
+          </div>
+        </article>
+        <article class="process-step">
+          <div class="num">03</div>
+          <div>
+            <h3>Expert Analysis</h3>
+            <p>Results are manually reviewed for meaningful intersections between strengths, motivations, stream choices, and future pathways.</p>
+          </div>
+        </article>
+        <article class="process-step">
+          <div class="num">04</div>
+          <div>
+            <h3>Interpretation</h3>
+            <p>Families receive a grounded conversation that turns complex findings into clear, usable academic and career direction.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="deliverable">
+      <div class="deliverable-copy">
+        <div class="eyebrow">The Deliverable</div>
+        <h2>Your personalized <em>roadmap.</em></h2>
+        <p>The final report becomes a practical reference point for stream selection, subject confidence, career exploration, and future conversations at home.</p>
+      </div>
+
+      <div class="roadmap">
+        <article class="roadmap-item">
+          <i class="ph ph-blueprint"></i>
+          <div>
+            <h3>Executive Summary</h3>
+            <p>A concise snapshot of key strengths, learning tendencies, temperament, and the conditions in which the student performs best.</p>
+          </div>
+        </article>
+        <article class="roadmap-item">
+          <i class="ph ph-compass-tool"></i>
+          <div>
+            <h3>Stream Recommendations</h3>
+            <p>Clear guidance on Science, Commerce, Humanities, or interdisciplinary paths with a detailed explanation of why each option fits.</p>
+          </div>
+        </article>
+        <article class="roadmap-item">
+          <i class="ph ph-path"></i>
+          <div>
+            <h3>Career Exploration</h3>
+            <p>An introduction to relevant professions, the nature of the work, and the educational pathways required to reach them.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <div class="eyebrow">What Parents &amp; Students Say</div>
+      <h2>Clarity, after weeks of <em>noise.</em></h2>
+
+      <div class="testimonial-grid">
+        <article class="quote">
+          <div>
+            <i class="ph-fill ph-quotes"></i>
+            <p>“We went from being overwhelmed by stream selection to having a clear, evidence-backed plan my child actually feels excited about.”</p>
+          </div>
+          <span>Parent of Grade 10 student</span>
+        </article>
+        <article class="quote">
+          <div>
+            <i class="ph-fill ph-quotes"></i>
+            <p>“The personality assessment was eye-opening. It helped me understand how I learn best, not just what subjects I am good at.”</p>
+          </div>
+          <span>Grade 9 student</span>
+        </article>
+        <article class="quote">
+          <div>
+            <i class="ph-fill ph-quotes"></i>
+            <p>“Combining modern assessments with Ayurvedic insights gave us a deeper understanding of our daughter’s natural pace and energy.”</p>
+          </div>
+          <span>Parent reflection</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-copy">
+        <div class="eyebrow">Immediate Action</div>
+        <h2>Ready to bridge who you are today with who you may <em>become?</em></h2>
+        <p>Book a free discovery conversation for your Grade 9 or Grade 10 student. Online sessions are available globally.</p>
+        <div class="hero-actions">
+          <a class="btn primary interactive" href="https://wa.me/919833004992">
+            <i class="ph ph-whatsapp-logo"></i>
+            Chat on WhatsApp
+          </a>
+          <a class="btn interactive" href="tel:+919833004992">
+            <i class="ph ph-phone-call"></i>
+            Call Now
+          </a>
+        </div>
+      </div>
+
+      <aside class="contact-panel">
+        <div>
+          <h3>Begin with one conversation.</h3>
+          <div class="contact-links">
+            <a class="interactive" href="https://wa.me/919833004992">
+              <span>9833004992</span>
+              <i class="ph ph-arrow-up-right"></i>
+            </a>
+            <a class="interactive" href="mailto:kamatriya11@gmail.com">
+              <span>kamatriya11@gmail.com</span>
+              <i class="ph ph-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+        <p class="availability">Location: Online sessions available globally.<br>Format: Student + parent discovery, guided assessment, expert interpretation.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+    gsap.to(".baseline-lines span", {
+      scaleY: 1,
+      duration: 1.6,
+      stagger: 0.12,
+      ease: "power4.out",
+      scrollTrigger: {
+        trigger: ".site",
+        start: "top 80%"
+      }
+    });
+
+    gsap.to(".giant-word", {
+      yPercent: -18,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "body",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true
+      }
+    });
+
+    gsap.to(".texture", {
+      yPercent: 10,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "body",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true
+      }
+    });
+
+    document.querySelectorAll(".reveal-title, .section-heading").forEach((title) => {
+      const split = new SplitType(title, { types: "words", wordClass: "word" });
+      split.words.forEach((word) => {
+        const wrapper = document.createElement("span");
+        wrapper.className = "split-line";
+        word.parentNode.insertBefore(wrapper, word);
+        wrapper.appendChild(word);
+      });
+
+      gsap.from(split.words, {
+        y: "115%",
+        duration: 1.05,
+        stagger: 0.045,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: title,
+          start: "top 84%"
+        }
+      });
+    });
+
+    gsap.utils.toArray(".image-frame").forEach((frame) => {
+      gsap.to(frame, {
+        clipPath: "inset(0% 0 0 0)",
+        duration: 1.25,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: frame,
+          start: "top 82%"
+        }
+      });
+    });
+
+    gsap.utils.toArray(".parallax-img").forEach((img) => {
+      gsap.to(img, {
+        yPercent: -12,
+        ease: "none",
+        scrollTrigger: {
+          trigger: img.closest(".image-frame") || img,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    });
+
+    gsap.from(".process-step, .roadmap-item, .quote", {
+      y: 42,
+      opacity: 0,
+      duration: 0.9,
+      stagger: 0.08,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: ".process",
+        start: "top 70%"
+      }
+    });
+
+    if (!isTouch) {
+      const dot = document.querySelector(".cursor-dot");
+      const ring = document.querySelector(".cursor-ring");
+
+      const dotX = gsap.quickTo(dot, "x", { duration: 0.16, ease: "power3.out" });
+      const dotY = gsap.quickTo(dot, "y", { duration: 0.16, ease: "power3.out" });
+      const ringX = gsap.quickTo(ring, "x", { duration: 0.32, ease: "power3.out" });
+      const ringY = gsap.quickTo(ring, "y", { duration: 0.32, ease: "power3.out" });
+
+      window.addEventListener("mousemove", (event) => {
+        dotX(event.clientX);
+        dotY(event.clientY);
+        ringX(event.clientX);
+        ringY(event.clientY);
+      });
+
+      document.querySelectorAll("a, button, .interactive, .method-row").forEach((element) => {
+        element.addEventListener("mouseenter", () => document.body.classList.add("cursor-active"));
+        element.addEventListener("mouseleave", () => document.body.classList.remove("cursor-active"));
+      });
+
+      document.querySelectorAll(".image-hover, img").forEach((element) => {
+        element.addEventListener("mouseenter", () => document.body.classList.add("cursor-view"));
+        element.addEventListener("mouseleave", () => document.body.classList.remove("cursor-view"));
+      });
+
+      const hoverImage = document.querySelector(".hover-image");
+      const hoverImg = hoverImage.querySelector("img");
+      const hoverX = gsap.quickTo(hoverImage, "x", { duration: 0.24, ease: "power3.out" });
+      const hoverY = gsap.quickTo(hoverImage, "y", { duration: 0.24, ease: "power3.out" });
+
+      document.querySelectorAll(".method-row").forEach((row) => {
+        row.addEventListener("mouseenter", () => {
+          hoverImg.src = row.dataset.img;
+          gsap.to(hoverImage, { opacity: 1, scale: 1, duration: 0.22, ease: "power2.out" });
+        });
+
+        row.addEventListener("mousemove", (event) => {
+          hoverX(event.clientX + 190);
+          hoverY(event.clientY);
+        });
+
+        row.addEventListener("mouseleave", () => {
+          gsap.to(hoverImage, { opacity: 0, scale: 0.92, duration: 0.22, ease: "power2.out" });
+        });
+      });
+
+      document.querySelectorAll(".magnetic").forEach((button) => {
+        const label = button.querySelector("span");
+        const buttonX = gsap.quickTo(button, "x", { duration: 0.38, ease: "power3.out" });
+        const buttonY = gsap.quickTo(button, "y", { duration: 0.38, ease: "power3.out" });
+        const labelX = gsap.quickTo(label, "x", { duration: 0.34, ease: "power3.out" });
+        const labelY = gsap.quickTo(label, "y", { duration: 0.34, ease: "power3.out" });
+
+        button.addEventListener("mousemove", (event) => {
+          const rect = button.getBoundingClientRect();
+          const relX = event.clientX - rect.left - rect.width / 2;
+          const relY = event.clientY - rect.top - rect.height / 2;
+          buttonX(relX * 0.32);
+          buttonY(relY * 0.32);
+          labelX(relX * 0.18);
+          labelY(relY * 0.18);
+        });
+
+        button.addEventListener("mouseleave", () => {
+          buttonX(0);
+          buttonY(0);
+          labelX(0);
+          labelY(0);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
