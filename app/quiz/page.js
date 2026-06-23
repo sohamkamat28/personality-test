@@ -131,7 +131,9 @@ export default function QuizPage() {
     }
   }
 
-  function setAnswer(value) {
+  function setAnswer(value, event) {
+    event?.currentTarget?.blur();
+
     const nextAnswers = [...answers];
     nextAnswers[currentIndex] = value;
     const nextIndex = currentIndex < assessmentQuestions.length - 1 ? currentIndex + 1 : currentIndex;
@@ -256,12 +258,12 @@ export default function QuizPage() {
 
           <h1>{currentQuestion.prompt}</h1>
 
-          <div className="answer-grid">
+          <div className="answer-grid" key={`question-${currentIndex}`}>
             {currentQuestion.options.map((option) => (
               <button
-                key={option.value}
+                key={`${currentIndex}-${option.value}`}
                 className={currentAnswer === option.value ? "answer-card is-selected" : "answer-card"}
-                onClick={() => setAnswer(option.value)}
+                onClick={(event) => setAnswer(option.value, event)}
               >
                 <strong>{option.label}</strong>
               </button>
