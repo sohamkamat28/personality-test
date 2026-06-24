@@ -1,21 +1,11 @@
 import { NextResponse } from "next/server";
 import { getDb, normalizeEmail, updateDb } from "@/lib/server/db";
 import { verifyGoogleIdToken } from "@/lib/server/google";
-import { checkRateLimit, rateLimitResponse } from "@/lib/server/rateLimit";
 import { createSessionId, getStudentSession, setStudentSession } from "@/lib/server/session";
 
 const sessionTtlMs = 1000 * 60 * 60 * 8;
 
 export async function POST(request) {
-  const limit = await checkRateLimit(request, {
-    key: "student-google-login",
-    limit: 20,
-    windowMs: 10 * 60 * 1000
-  });
-  if (!limit.allowed) {
-    return rateLimitResponse(limit.retryAfter);
-  }
-
   const { credential } = await request.json().catch(() => ({}));
   if (typeof credential !== "string" || credential.length < 100 || credential.length > 5000) {
     return NextResponse.json({ message: "Missing Google credential." }, { status: 400 });
