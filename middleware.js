@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 const studentCookie = "typescope_student";
 const adminCookie = "typescope_admin";
-const stateChangingMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function securityHeaders() {
   return {
@@ -36,18 +35,8 @@ function withSecurityHeaders(response) {
   return response;
 }
 
-function hasCrossSiteOrigin(request) {
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  return origin !== request.nextUrl.origin;
-}
-
 export function middleware(request) {
   const { pathname } = request.nextUrl;
-
-  if (stateChangingMethods.has(request.method) && hasCrossSiteOrigin(request)) {
-    return withSecurityHeaders(NextResponse.json({ message: "Cross-site request blocked." }, { status: 403 }));
-  }
 
   if (pathname === "/quiz" && !request.cookies.has(studentCookie)) {
     return withSecurityHeaders(NextResponse.redirect(new URL("/student/login", request.url)));
