@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle, Circle, SignOut, WarningCircle, X } from "@phosphor-icons/react";
+import { ArrowLeft, CheckCircle, Circle, SignOut, WarningCircle, X } from "@phosphor-icons/react";
 import { assessmentQuestions } from "@/data/personalityQuestions";
 import BrandLogo from "@/components/BrandLogo";
 
@@ -74,27 +74,6 @@ export default function QuizPage() {
     loadUser();
   }, []);
 
-  useEffect(() => {
-    if (!isProgressReady || isSubmitted) return;
-
-    const timeout = window.setTimeout(async () => {
-      const response = await fetch("/api/quiz/progress", {
-        method: "POST",
-        cache: "no-store",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, currentIndex })
-      });
-
-      if (!response.ok && response.status !== 401) {
-        const data = await response.json().catch(() => ({}));
-        setDialog(sessionErrorContent(data.message));
-      }
-    }, 300);
-
-    return () => window.clearTimeout(timeout);
-  }, [answers, currentIndex, isProgressReady, isSubmitted]);
-
   const completed = answers.filter(Boolean).length;
   const pending = assessmentQuestions.length - completed;
   const currentAnswer = answers[currentIndex];
@@ -111,7 +90,9 @@ export default function QuizPage() {
   );
 
   function moveToQuestion(index) {
-    setCurrentIndex(Math.min(assessmentQuestions.length - 1, Math.max(0, index)));
+    const nextIndex = Math.min(assessmentQuestions.length - 1, Math.max(0, index));
+    setCurrentIndex(nextIndex);
+    saveProgress(answers, nextIndex);
   }
 
   async function saveProgress(nextAnswers, nextIndex) {
@@ -143,9 +124,9 @@ export default function QuizPage() {
 
     if (currentIndex < assessmentQuestions.length - 1) {
       window.setTimeout(() => {
-        moveToQuestion(nextIndex);
-        questionCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 180);
+        setCurrentIndex(nextIndex);
+        questionCardRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+      }, 90);
     }
   }
 
@@ -275,12 +256,7 @@ export default function QuizPage() {
               <ArrowLeft size={17} />
               Previous
             </button>
-            {currentIndex < assessmentQuestions.length - 1 ? (
-              <button className="primary-button" onClick={() => moveToQuestion(currentIndex + 1)}>
-                Next
-                <ArrowRight size={17} />
-              </button>
-            ) : (
+            {currentIndex === assessmentQuestions.length - 1 && (
               <button className="primary-button" onClick={submitQuiz} disabled={!canSubmit || isSubmitting}>
                 {isSubmitting ? "Submitting..." : "Submit"}
               </button>
