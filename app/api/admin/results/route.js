@@ -10,7 +10,16 @@ export async function GET() {
     return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
   }
 
-  const db = await getDb();
+  let db;
+  try {
+    db = await getDb();
+  } catch {
+    return NextResponse.json(
+      { message: "Database connection failed. Please check MONGODB_URI and MongoDB Atlas network access." },
+      { status: 503 }
+    );
+  }
+
   const results = db.submissions
     .slice()
     .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))

@@ -7,15 +7,26 @@ async function requireAdmin() {
   return Boolean(session);
 }
 
+function databaseError() {
+  return NextResponse.json(
+    { message: "Database connection failed. Please check MONGODB_URI and MongoDB Atlas network access." },
+    { status: 503 }
+  );
+}
+
 export async function GET() {
   if (!(await requireAdmin())) {
     return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
   }
 
-  const db = await getDb();
-  return NextResponse.json({
-    students: db.students.map((student) => publicStudent(student, db.submissions))
-  });
+  try {
+    const db = await getDb();
+    return NextResponse.json({
+      students: db.students.map((student) => publicStudent(student, db.submissions))
+    });
+  } catch {
+    return databaseError();
+  }
 }
 
 export async function POST(request) {
@@ -29,24 +40,28 @@ export async function POST(request) {
     return NextResponse.json({ message: "Enter a valid student email." }, { status: 400 });
   }
 
-  const student = await updateDb((db) => {
-    const existing = db.students.find((item) => normalizeEmail(item.email) === normalizedEmail);
-    if (existing) {
-      existing.name = String(name || existing.name || "").trim();
-      return existing;
-    }
+  try {
+    const student = await updateDb((db) => {
+      const existing = db.students.find((item) => normalizeEmail(item.email) === normalizedEmail);
+      if (existing) {
+        existing.name = String(name || existing.name || "").trim();
+        return existing;
+      }
 
-    const created = {
-      email: normalizedEmail,
-      name: String(name || "").trim(),
-      createdAt: new Date().toISOString()
-    };
-    db.students.push(created);
-    return created;
-  });
+      const created = {
+        email: normalizedEmail,
+        name: String(name || "").trim(),
+        createdAt: new Date().toISOString()
+      };
+      db.students.push(created);
+      return created;
+    });
 
-  const db = await getDb();
-  return NextResponse.json({ student: publicStudent(student, db.submissions) });
+    const db = await getDb();
+    return NextResponse.json({ student: publicStudent(student, db.submissions) });
+  } catch {
+    return databaseError();
+  }
 }
 
 export async function DELETE(request) {
@@ -60,24 +75,28 @@ export async function DELETE(request) {
     return NextResponse.json({ message: "Enter a valid student email to remove." }, { status: 400 });
   }
 
-  const removed = await updateDb((db) => {
-    const studentsBefore = db.students.length;
-    const submissionsBefore = db.submissions.length;
-    const progressBefore = (db.progress || []).length;
-    const activeSessionsBefore = (db.activeSessions || []).length;
+  try {
+    const removed = await updateDb((db) => {
+      const studentsBefore = db.students.length;
+      const submissionsBefore = db.submissions.length;
+      const progressBefore = (db.progress || []).length;
+      const activeSessionsBefore = (db.activeSessions || []).length;
 
-    db.students = db.students.filter((student) => normalizeEmail(student.email) !== normalizedEmail);
-    db.submissions = db.submissions.filter((submission) => normalizeEmail(submission.email) !== normalizedEmail);
-    db.progress = (db.progress || []).filter((progress) => normalizeEmail(progress.email) !== normalizedEmail);
-    db.activeSessions = (db.activeSessions || []).filter((session) => normalizeEmail(session.email) !== normalizedEmail);
+      db.students = db.students.filter((student) => normalizeEmail(student.email) !== normalizedEmail);
+      db.submissions = db.submissions.filter((submission) => normalizeEmail(submission.email) !== normalizedEmail);
+      db.progress = (db.progress || []).filter((progress) => normalizeEmail(progress.email) !== normalizedEmail);
+      db.activeSessions = (db.activeSessions || []).filter((session) => normalizeEmail(session.email) !== normalizedEmail);
 
-    return {
-      studentRemoved: studentsBefore - db.students.length,
-      submissionsRemoved: submissionsBefore - db.submissions.length,
-      progressRemoved: progressBefore - db.progress.length,
-      activeSessionsRemoved: activeSessionsBefore - db.activeSessions.length
-    };
-  });
+      return {
+        studentRemoved: studentsBefore - db.students.length,
+        submissionsRemoved: submissionsBefore - db.submissions.length,
+        progressRemoved: progressBefore - db.progress.length,
+        activeSessionsRemoved: activeSessionsBefore - db.activeSessions.length
+      };
+    });
 
-  return NextResponse.json({ ok: true, removed });
+    return NextResponse.json({ ok: true, removed });
+  } catch {
+    return databaseError();
+  }
 }

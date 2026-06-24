@@ -10,23 +10,56 @@ export default function AdminPage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("Loading admin data...");
+  const [isSaving, setIsSaving] = useState(false);
+
+  async function fetchJson(url, options = {}, timeoutMs = 12000) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        cache: "no-store",
+        credentials: "same-origin",
+        ...options,
+        signal: controller.signal
+      });
+      const data = await response.json().catch(() => ({}));
+      return { response, data };
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
 
   async function loadAdminData() {
-    const [studentsResponse, resultsResponse] = await Promise.all([
-      fetch("/api/admin/students", { cache: "no-store", credentials: "same-origin" }),
-      fetch("/api/admin/results", { cache: "no-store", credentials: "same-origin" })
-    ]);
+    try {
+      const [studentsResult, resultsResult] = await Promise.all([
+        fetchJson("/api/admin/students"),
+        fetchJson("/api/admin/results")
+      ]);
 
-    if (studentsResponse.status === 401 || resultsResponse.status === 401) {
-      window.location.href = "/admin/login";
-      return;
+      if (studentsResult.response.status === 401 || resultsResult.response.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      if (!studentsResult.response.ok) {
+        throw new Error(studentsResult.data.message || "Could not load registered students.");
+      }
+
+      if (!resultsResult.response.ok) {
+        throw new Error(resultsResult.data.message || "Could not load results.");
+      }
+
+      setStudents(studentsResult.data.students || []);
+      setResults(resultsResult.data.results || []);
+      setMessage("");
+    } catch (error) {
+      setMessage(
+        error.name === "AbortError"
+          ? "The admin data is taking too long to load. Please check your database connection and refresh."
+          : error.message || "Could not load admin data. Please refresh and try again."
+      );
     }
-
-    const studentsData = await studentsResponse.json();
-    const resultsData = await resultsResponse.json();
-    setStudents(studentsData.students || []);
-    setResults(resultsData.results || []);
-    setMessage("");
   }
 
   useEffect(() => {
@@ -35,21 +68,44 @@ export default function AdminPage() {
 
   async function addStudent(event) {
     event.preventDefault();
+    if (isSaving) return;
+
     setMessage("Saving student...");
-    const response = await fetch("/api/admin/students", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, name })
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      setMessage(data.message || "Could not add student.");
-      return;
+    setIsSaving(true);
+
+    try {
+      const { response, data } = await fetchJson("/api/admin/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name })
+      });
+
+      if (response.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      if (!response.ok) {
+        setMessage(data.message || "Could not add student.");
+        return;
+      }
+
+      setStudents((current) => {
+        const withoutExisting = current.filter((student) => student.email !== data.student.email);
+        return [data.student, ...withoutExisting].sort((a, b) => a.email.localeCompare(b.email));
+      });
+      setEmail("");
+      setName("");
+      setMessage("Student registered.");
+    } catch (error) {
+      setMessage(
+        error.name === "AbortError"
+          ? "Saving took too long. Please check your database connection and try again."
+          : error.message || "Could not add student. Please try again."
+      );
+    } finally {
+      setIsSaving(false);
     }
-    setEmail("");
-    setName("");
-    setMessage("Student registered.");
-    await loadAdminData();
   }
 
   async function removeStudent(student) {
@@ -59,18 +115,32 @@ export default function AdminPage() {
     if (!confirmed) return;
 
     setMessage("Removing student and result...");
-    const response = await fetch(`/api/admin/students?email=${encodeURIComponent(student.email)}`, {
-      method: "DELETE"
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      setMessage(data.message || "Could not remove student.");
-      return;
-    }
+    try {
+      const { response, data } = await fetchJson(`/api/admin/students?email=${encodeURIComponent(student.email)}`, {
+        method: "DELETE"
+      });
 
-    const removedResults = data.removed?.submissionsRemoved || 0;
-    setMessage(`Student removed. Deleted ${removedResults} result record${removedResults === 1 ? "" : "s"}.`);
-    await loadAdminData();
+      if (response.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      if (!response.ok) {
+        setMessage(data.message || "Could not remove student.");
+        return;
+      }
+
+      const removedResults = data.removed?.submissionsRemoved || 0;
+      setStudents((current) => current.filter((item) => item.email !== student.email));
+      setResults((current) => current.filter((item) => item.email !== student.email));
+      setMessage(`Student removed. Deleted ${removedResults} result record${removedResults === 1 ? "" : "s"}.`);
+    } catch (error) {
+      setMessage(
+        error.name === "AbortError"
+          ? "Removing took too long. Please check your database connection and try again."
+          : error.message || "Could not remove student. Please try again."
+      );
+    }
   }
 
   async function logout() {
@@ -146,9 +216,9 @@ export default function AdminPage() {
             <span>Google email</span>
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="student@example.com" required />
           </label>
-          <button className="primary-button" type="submit">
+          <button className="primary-button" type="submit" disabled={isSaving}>
             <Plus size={17} weight="bold" />
-            Register email
+            {isSaving ? "Saving..." : "Register email"}
           </button>
           {message && <p className="form-message">{message}</p>}
         </form>
