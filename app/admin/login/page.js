@@ -16,33 +16,35 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
     setMessage("Checking credentials...");
 
-    const response = await fetch("/api/admin/login", {
-      method: "POST",
-      cache: "no-store",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await response.json();
-    setIsSubmitting(false);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
 
-    if (!response.ok) {
-      setMessage(data.message || "Login failed.");
-      return;
-    }
-
-    await waitForAdminSession();
-    window.location.assign(data.redirectTo);
-  }
-
-  async function waitForAdminSession() {
-    for (let attempt = 0; attempt < 8; attempt += 1) {
-      const response = await fetch("/api/admin/students", {
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
         cache: "no-store",
-        credentials: "same-origin"
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        signal: controller.signal
       });
-      if (response.ok) return;
-      await new Promise((resolve) => setTimeout(resolve, 120));
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setMessage(data.message || "Login failed. Please check the admin email and password.");
+        return;
+      }
+
+      window.location.assign(data.redirectTo || "/admin");
+    } catch (error) {
+      setMessage(
+        error.name === "AbortError"
+          ? "Login is taking too long. Please refresh and try again."
+          : "Login failed. Please refresh and try again."
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      setIsSubmitting(false);
     }
   }
 
