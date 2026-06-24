@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/server/db";
+import { databaseErrorMessage, getDb } from "@/lib/server/db";
 import { getAdminSession } from "@/lib/server/session";
 import { assessmentQuestions } from "@/data/personalityQuestions";
 import { scoreAssessment } from "@/lib/scoring";
@@ -13,9 +13,9 @@ export async function GET() {
   let db;
   try {
     db = await getDb();
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { message: "Database connection failed. Please check MONGODB_URI and MongoDB Atlas network access." },
+      { message: databaseErrorMessage(error) },
       { status: 503 }
     );
   }

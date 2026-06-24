@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb, normalizeEmail, publicStudent, updateDb } from "@/lib/server/db";
+import { databaseErrorMessage, getDb, normalizeEmail, publicStudent, updateDb } from "@/lib/server/db";
 import { getAdminSession } from "@/lib/server/session";
 
 async function requireAdmin() {
@@ -7,9 +7,9 @@ async function requireAdmin() {
   return Boolean(session);
 }
 
-function databaseError() {
+function databaseError(error) {
   return NextResponse.json(
-    { message: "Database connection failed. Please check MONGODB_URI and MongoDB Atlas network access." },
+    { message: databaseErrorMessage(error) },
     { status: 503 }
   );
 }
@@ -24,8 +24,8 @@ export async function GET() {
     return NextResponse.json({
       students: db.students.map((student) => publicStudent(student, db.submissions))
     });
-  } catch {
-    return databaseError();
+  } catch (error) {
+    return databaseError(error);
   }
 }
 
@@ -59,8 +59,8 @@ export async function POST(request) {
 
     const db = await getDb();
     return NextResponse.json({ student: publicStudent(student, db.submissions) });
-  } catch {
-    return databaseError();
+  } catch (error) {
+    return databaseError(error);
   }
 }
 
@@ -96,7 +96,7 @@ export async function DELETE(request) {
     });
 
     return NextResponse.json({ ok: true, removed });
-  } catch {
-    return databaseError();
+  } catch (error) {
+    return databaseError(error);
   }
 }
