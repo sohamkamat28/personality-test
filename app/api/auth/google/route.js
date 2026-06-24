@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getDb, normalizeEmail, updateDb } from "@/lib/server/db";
-import { isRuntimeConfigured } from "@/lib/server/env";
 import { verifyGoogleIdToken } from "@/lib/server/google";
 import { checkRateLimit, rateLimitResponse } from "@/lib/server/rateLimit";
 import { createSessionId, getStudentSession, setStudentSession } from "@/lib/server/session";
@@ -8,10 +7,6 @@ import { createSessionId, getStudentSession, setStudentSession } from "@/lib/ser
 const sessionTtlMs = 1000 * 60 * 60 * 8;
 
 export async function POST(request) {
-  if (!isRuntimeConfigured()) {
-    return NextResponse.json({ message: "Sign-in is temporarily unavailable." }, { status: 503 });
-  }
-
   const limit = await checkRateLimit(request, {
     key: "student-google-login",
     limit: 20,

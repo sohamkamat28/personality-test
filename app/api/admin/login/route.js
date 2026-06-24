@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { normalizeEmail } from "@/lib/server/db";
-import { isRuntimeConfigured } from "@/lib/server/env";
 import { checkRateLimit, rateLimitResponse } from "@/lib/server/rateLimit";
 import { setAdminSession } from "@/lib/server/session";
 
@@ -12,10 +11,6 @@ function safeEqual(a, b) {
 }
 
 export async function POST(request) {
-  if (!isRuntimeConfigured()) {
-    return NextResponse.json({ message: "Admin login is temporarily unavailable." }, { status: 503 });
-  }
-
   const { email, password } = await request.json().catch(() => ({}));
   if (typeof email !== "string" || typeof password !== "string" || email.length > 254 || password.length > 256) {
     return NextResponse.json({ message: "Invalid admin credentials." }, { status: 401 });
