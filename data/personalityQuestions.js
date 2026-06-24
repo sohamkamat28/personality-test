@@ -28,7 +28,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 2,
-    "prompt": "You like to engage in tasks requiring active and fast-paced participation",
+    "prompt": "You enjoy tasks that are active and move quickly.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -158,7 +158,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 7,
-    "prompt": "You think that everything in the world depends on the situation or point of view",
+    "prompt": "You believe most things depend on the situation or how people see them.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -236,7 +236,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 10,
-    "prompt": "When making a decision, you rely more on your feelings than on analysis of the situation",
+    "prompt": "When making decisions, you trust your feelings more than detailed analysis.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -262,7 +262,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 11,
-    "prompt": "You often think about humankind and its destiny",
+    "prompt": "You often think about the future of humanity.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -288,7 +288,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 12,
-    "prompt": "You believe the best decision is one which can be easily changed",
+    "prompt": "You prefer decisions that can be changed later if needed.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -314,7 +314,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 13,
-    "prompt": "You often think about the root cause of phenomena and things",
+    "prompt": "You often think about why things happen at a deeper level.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -626,7 +626,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 25,
-    "prompt": "You easily see the general principle behind specific occurrences",
+    "prompt": "You can easily understand the bigger idea behind specific events.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -730,7 +730,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 29,
-    "prompt": "You tend to sympathize with other people",
+    "prompt": "You usually understand and care about how other people feel.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -834,7 +834,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 33,
-    "prompt": "You tend to rely on your experience rather than on theoretical possibilities",
+    "prompt": "You trust your own experience more than theoretical ideas.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -1094,7 +1094,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 43,
-    "prompt": "You think that almost everything can be analyzed",
+    "prompt": "You believe almost everything can be understood through analysis.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -1276,7 +1276,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 50,
-    "prompt": "When solving a problem you would rather follow a familiar approach than seek a new one",
+    "prompt": "When solving a problem, you prefer a familiar method over trying a new one.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -1354,7 +1354,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 53,
-    "prompt": "When solving a problem, you rely on logic rather than emotion or belief, in most situations.",
+    "prompt": "When solving problems, you usually rely on logic more than emotions or beliefs.",
     "options": [
       {
         "label": "a. Strongly Agree",
@@ -1536,7 +1536,7 @@ export const assessmentQuestions = [
   },
   {
     "id": 60,
-    "prompt": "As a rule, current preoccupations worry you more than your future plans",
+    "prompt": "Your current concerns usually worry you more than your future plans.",
     "options": [
       {
         "label": "a. Strongly Agree",
