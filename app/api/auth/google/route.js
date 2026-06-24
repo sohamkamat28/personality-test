@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
 import { getDb, normalizeEmail, updateDb } from "@/lib/server/db";
+import { isRuntimeConfigured } from "@/lib/server/env";
 import { verifyGoogleIdToken } from "@/lib/server/google";
+import { checkRateLimit, rateLimitResponse } from "@/lib/server/rateLimit";
 import { createSessionId, getStudentSession, setStudentSession } from "@/lib/server/session";
 
 const sessionTtlMs = 1000 * 60 * 60 * 8;
 
 export async function POST(request) {
+  if (!isRuntimeConfigured()) {
+    return NextResponse.json({ message: "Sign-in is temporarily unavailable." }, { status: 503 });
+  }
+
+  const limit = await checkRateLimit(request, {
+    key: "student-google-login",
+    limit: 20,
+    windowMs: 10 * 60 * 1000
+  });
+  if (!limit.allowed) {
+    return rateLimitResponse(limit.retryAfter);
+  }
+
   const { credential } = await request.json().catch(() => ({}));
-  if (!credential) {
+  if (typeof credential !== "string" || credential.length < 100 || credential.length > 5000) {
     return NextResponse.json({ message: "Missing Google credential." }, { status: 400 });
   }
 
